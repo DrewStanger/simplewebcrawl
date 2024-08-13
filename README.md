@@ -9,9 +9,16 @@ The results from a crawl are stored as a JSON file mapping visited URLs to a lis
 
 ### How to use
 
-You can run the web crawler with the following command
+Install dependencies 
 
 ```
+pip3 install -r requirements.txt
+```
+
+You can run the web crawler by doing the following
+
+```
+cd webcrawler 
 python webcrawler.py --domain <domain_url> --max_depth <depth> --conc <number_of_concurrent_requests>
 ``` 
 Replace <domain_url>, <depth>, and <number_of_concurrent_requests> with the appropriate values:
