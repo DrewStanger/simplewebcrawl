@@ -67,7 +67,6 @@ def test_format_url(crawler, url, expected):
 def test_is_within_domain(crawler, url, expected):
     assert crawler.is_within_domain(url) == expected
 
-
 @patch.object(WebCrawler, 'fetch_page_content')
 @patch.object(WebCrawler, 'find_links')
 def test_process_page(mock_find_links, mock_fetch_content, crawler):
@@ -87,3 +86,4 @@ def test_parse_args():
         assert args.domain == 'https://test.com'
         assert args.max_depth == 5
         assert args.conc == 20
+

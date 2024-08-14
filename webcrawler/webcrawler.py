@@ -1,13 +1,12 @@
+
+from collections import deque
+import json
+import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 
-from bs4 import BeautifulSoup
-from collections import deque
-import requests
-import logging
-from urllib.parse import urlparse, urljoin
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import argparse
-import json
+from .utils.parse_args import parse_args
+
 
 
 class WebCrawler:
@@ -28,54 +27,6 @@ class WebCrawler:
         self.url_graph = {}
         self.executor = ThreadPoolExecutor(max_workers=max_workers)  # ThreadPoolExecutor
 
-    def fetch_page_content(self, url):
-        """
-        Request the url page content.
-        :param url: url to request
-        :return: raw HTML as a string or None if unsuccessful
-        """
-        try:
-            res = requests.get(url, timeout=10)
-            return res.text
-        except requests.RequestException as e:
-            # if we fail to fetch a page log an error, but continue crawling
-            logging.error(f'Failed to fetch {url}, {e}')
-            return None
-
-    def find_links(self, page_content):
-        """
-        Looks at each tag which can contain a url, finds all URLs and returns these as a list
-        :param page_content: string of raw HTML page content
-        :return: list of all found urls from the content
-        """
-        soup = BeautifulSoup(page_content, 'html.parser')
-        links = []
-        for tag in ['a', 'link', 'script', 'img']:
-            links.extend([elem.get('href') or elem.get('src') for elem in soup.find_all(tag) if
-                          elem.get('href') or elem.get('src')])
-        return links
-
-    def format_url(self, url):
-        """
-        Formats a given url into an absolute url
-        This means we can handle /relative-link but drops uris like #main
-        :param url:
-        :return: formatted url or None for invalid urls
-        """
-        parsed_url = urlparse(url)
-        if url.startswith('/'):
-            return urljoin(self.domain, url)
-        elif parsed_url.scheme in ['http', 'https']:
-            return url
-        return None
-
-    def is_within_domain(self, url):
-        """
-        Return True if the url belongs to the provided domain
-        :param url:
-        :return: Boolean, True if belongs to same domain, False otherwise
-        """
-        return url.startswith(self.domain)
 
     def process_page(self, current_url, depth):
         """
@@ -106,12 +57,13 @@ class WebCrawler:
                     next_urls.append((formatted_url, depth + 1))
 
         return next_urls
-
+    
     def write_output(self):
         with open(os.path.join('output/', 'url_graph.json'), 'w') as f:
             json.dump(self.url_graph, f, indent=4)  # Write the graph to a JSON file with indentation for readability
 
-        print('output written to webcrawler/output/')
+    print('output written to webcrawler/output/')
+
 
     def crawl(self):
         """
@@ -152,14 +104,6 @@ class WebCrawler:
         # Write the URL graph to a JSON file in the output/ folder
         self.write_output()
 
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Web Crawler!")
-    parser.add_argument("--domain", help="The domain to start crawling from")
-    parser.add_argument("--max_depth", type=int, default=1, help="Max depth to crawl")
-    parser.add_argument("--conc", type=int, default=10, help="Max number of concurrent requests")
-    return parser.parse_args()
 
 if __name__ == '__main__':
     args = parse_args()
