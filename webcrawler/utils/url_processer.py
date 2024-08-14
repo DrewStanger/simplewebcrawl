@@ -1,9 +1,7 @@
-
-
 from urllib.parse import urljoin, urlparse
 
 
-def format_url(url):
+def format_url(domain, url):
     """
     Formats a given url into an absolute url
     This means we can handle /relative-link but drops uris like #main
@@ -17,10 +15,16 @@ def format_url(url):
         return url
     return None
 
-def is_within_domain(url):
+
+def is_within_domain(domain, url):
     """
-    Return True if the url belongs to the provided domain
-    :param url:
-    :return: Boolean, True if belongs to same domain, False otherwise
+    Return True if the url belongs to the provided domain.
+
+    :param domain: The base domain to check against.
+    :param url: The URL to check.
+    :return: Boolean, True if the URL belongs to the same domain, False otherwise.
     """
-    return url.startswith(domain)
+    parsed_domain = urlparse(domain)
+    parsed_url = urlparse(url)
+
+    return parsed_url.netloc == parsed_domain.netloc
