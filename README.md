@@ -1,27 +1,26 @@
 # WebCrawler 
 
-This is a multi-threaded web crawler implemented in Python. The python works iteratively from a provided starting domain 
-and will explore all URLs contained in that domain to a specified depth.
+This is a multi-threaded web crawler implemented in Python. It uses a Breadth-First Search (BFS) approach, starting 
+from a provided domain, to explore all URLs within that domain up to a specified depth.
 
-The results from a crawl are stored as a JSON file mapping visited URLs to a list of URLs found within that page.
+The results from a crawl are stored as a JSON file, mapping each visited URL to a list of URLs found on that page.
 
-## How to Install 
+## Installation
 
-Install dependencies 
+Install the necessary dependencies using pip:
 
 ```
 pip3 install -r requirements.txt
 ```
 
-## How to use
+## Usage
 
-
-You can run the web crawler from root of the project by doing the following
+You can run the web crawler from the root of the project with the following command:
 
 ```
 python -m webcrawler.crawler --domain <domain_url> --max_depth <depth> --conc <number_of_concurrent_requests>
 ```
-For example, to run the web crawler against monzo.com, run the following.
+For example, to crawl monzo.com with a maximum depth of 1 and 10 concurrent requests, run:
 ```
 python -m webcrawler.crawler --domain http://monzo.com --max_depth 1 --conc 10
 ``` 
@@ -34,7 +33,8 @@ Replace <domain_url>, <depth>, and <number_of_concurrent_requests> with the appr
 ### Output
 
 After the crawler has completed it run you will find the file `url_graph.json` in the `output/` folder. The resulting 
-output is a map which links the visited URL to a list of the URLs contained on the page, and should look something like this
+output is a map which links the visited URL to a list of the URLs contained on the page, 
+and should look something like this
 ```
 {
     "https://example.com": [
@@ -49,8 +49,8 @@ output is a map which links the visited URL to a list of the URLs contained on t
 ```
 ## Testing
 
-There unit tests for each function provided as a part of the web crawler, these can be run from the root of the project
-using pytest by running the following command
+Unit tests are provided for each function in the web crawler. 
+You can run these tests from the root of the project using pytest:
 
 ```
 pytest tests/
@@ -58,23 +58,21 @@ pytest tests/
 
 ## Trade-offs and Potential Improvements
 
-There were a number of decisions made when putting together this project, all of which have been made to provide a suitable
-solution for the required use case. 
+Several design decisions were made to meet the required use case effectively. 
+Below are some trade-offs and areas for potential improvement:
 
 ### Use of BFS
 
-The use of BFS for the webcrawler means that it searches all webpages at the current depth before moving onto the next 
-depth. Within the crawler I add each discovered link into the queue and determine if we need to visit it, or if it's already been 
-visited before crawling it to obtain more links.
+The BFS approach ensures that the crawler searches all webpages at the current depth before moving on to the next. 
+Links discovered are added to a queue, and the crawler checks if a link has already been visited before exploring it further.
 
-This approach fulfils the requirement of discovering all links that exist on a certain URL before progressing deeper into the site.
+This approach is beneficial for discovering all links at a particular depth before diving deeper into the site.
  
 
 ### Concurrency
 
-`ThreadPoolExecutor` is used to concurrently process pages in order to fetch and then find all links on a page.
-This enables the crawling tasks to be ran in parallel and depending on the number of concurrent workers can greatly 
-reduce the crawling time.
+The `ThreadPoolExecutor` is used to process pages concurrently, fetching and discovering links in parallel. 
+Depending on the number of concurrent workers, this can significantly reduce the crawl time.
 
 ### Testing
 
@@ -88,8 +86,7 @@ This could also enable performance and load testing.
 
 ### Output
 
-The output is written to JSON as a map between URLs visited and a list of the URLs discovered at that domain.
-This may become a bottleneck for very large websites, or very deep crawls as all this data is stored in memory and then
-written to the output file. A potential improvement here is continuously writing to the file, or instead writing to a
-database as the crawl progresses. 
+The output is written to JSON, mapping visited URLs to the list of discovered URLs. For very large websites or deep 
+crawls, this could become a bottleneck as the data is stored in memory before being written to the file. A potential 
+improvement could be to write to the file continuously or to use a database to store results as the crawl progresses.
 

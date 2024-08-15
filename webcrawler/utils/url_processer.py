@@ -4,7 +4,8 @@ from urllib.parse import urljoin, urlparse
 def format_url(domain, url):
     """
     Formats a given url into an absolute url
-    This means we can handle /relative-link but drops uris like #main
+    This means we can handle /relative-link but drops uris like #main that we do not want to crawl
+    :param domain:
     :param url:
     :return: formatted url or None for invalid urls
     """

@@ -24,21 +24,22 @@ class WebCrawler:
         """
         Initialize the WebCrawler with a subdomain and maximum crawl depth.
 
-        :param domain: The starting subdomain URL.
+        :param domain: The starting domain URL i.e. http://google.com.
         :param max_depth: The maximum depth to crawl from the starting URL.
+        :param max_workers: Number of concurrent workers that ThreadPoolExecutor will use.
         """
         self.domain = domain
         self.visited = set()
         self.max_depth = max_depth
         self.url_graph = {}
-        self.executor = ThreadPoolExecutor(max_workers=max_workers)  # ThreadPoolExecutor
+        self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
     def process_page(self, current_url, depth):
         """
-        Processes a specific url and returns a list which contains the urls found on the page
+        Processes a given url and returns a list of urls found on the page
         :param current_url: the url from the front of the queue for processing
         :param depth: the current depth from the starting url
-        :return: next_urls, either an empty list if there are no urls or a list of urls and the current depth
+        :return: next_urls, [] or List of urls found and the current depth.
         """
         if current_url in self.visited:
             return []
@@ -65,19 +66,18 @@ class WebCrawler:
         return next_urls
 
     def write_output(self):
+        """
+        Writes the url_graph data to a JSON file for readability.
+        """
         with open(url_graph_path, 'w') as f:
-            json.dump(self.url_graph, f, indent=4)  # Write the graph to a JSON file with indentation for readability
+            json.dump(self.url_graph, f, indent=4)
         print('crawl complete!')
         print('output written to webcrawler/output/')
 
     def crawl(self):
         """
-        Crawls the domain starting from the initial domain, exploring up to a specified depth.
-
-        The method uses a breadth-first search (BFS) approach to traverse web pages. It starts
-        with the user provided URL and explores linked pages on the same domain up to a maximum depth defined
-        by `self.max_depth`.
-        It iterates until the queue is empty and there are no further pages to explore
+        Crawls the domain from the starting URL up to `self.max_depth`.
+        Processes pages concurrently, following links until no further items remain in the queue.
         """
         url_queue = deque([(self.domain, 0)])
         future_to_url = {}

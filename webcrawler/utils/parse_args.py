@@ -1,9 +1,10 @@
 import argparse
 
-from _pytest import logging
-
 
 def parse_args():
+    """
+    Parses command-line arguments for the web crawler.
+    """
     parser = argparse.ArgumentParser(description="Web Crawler!")
     parser.add_argument("--domain", help="The domain to start crawling from")
     parser.add_argument("--max_depth", type=int, default=1, help="Max depth to crawl")
