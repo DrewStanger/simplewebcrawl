@@ -5,7 +5,7 @@ def find_links(page_content):
     """
     Looks at each tag which can contain a url, finds all URLs and returns these as a list
     :param page_content: string of raw HTML page content
-    :return: list of all found urls from the content
+    :return: list of all found urls from the content, or empty list
     """
     soup = BeautifulSoup(page_content, 'html.parser')
     links = []

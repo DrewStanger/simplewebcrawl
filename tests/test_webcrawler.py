@@ -1,6 +1,8 @@
+import os
+import re
+
 import pytest
 from unittest.mock import patch, MagicMock
-from collections import deque
 
 from webcrawler.crawler import WebCrawler
 
@@ -49,8 +51,13 @@ def test_process_page_no_content(mock_fetch_page_content, crawler):
 @patch('json.dump')
 def test_write_output(mock_json_dump, mock_open, crawler):
     crawler.url_graph = {"https://example.com": ["https://example.com/page1"]}
+    expected_path_regex = re.compile(
+        r'.*webcrawler\\output\\url_graph\.json'
+    )
     crawler.write_output()
-    mock_open.assert_called_once_with('output/url_graph.json', 'w')
+    actual_path = mock_open.call_args[0][0]
+    assert expected_path_regex.match(
+        actual_path), f"Path '{actual_path}' does not match the pattern '{expected_path_regex.pattern}'"
     mock_json_dump.assert_called_once()
 
 

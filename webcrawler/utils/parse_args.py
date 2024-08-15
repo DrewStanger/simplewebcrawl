@@ -1,5 +1,8 @@
 import argparse
 
+from _pytest import logging
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Web Crawler!")
     parser.add_argument("--domain", help="The domain to start crawling from")

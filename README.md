@@ -43,3 +43,6 @@ output is a map which links the visited URL to a list of the URLs contained on t
     ]
 }
 ```
+
+### Trade-offs and Potential Improvements
+

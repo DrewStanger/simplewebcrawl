@@ -4,11 +4,14 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 
-from webcrawler.utils.parse_args import parse_args
-from webcrawler.helpers.page_fetcher import fetch_page_content
 from webcrawler.helpers.link_extractor import find_links
-from webcrawler.utils.url_processer import is_within_domain, format_url
+from webcrawler.helpers.page_fetcher import fetch_page_content
+from webcrawler.utils.parse_args import parse_args
+from webcrawler.utils.url_processer import format_url, is_within_domain
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+output_dir = os.path.join(script_dir, '', 'output')
+url_graph_path = os.path.join(output_dir, 'url_graph.json')
 
 class WebCrawler:
     """
@@ -39,31 +42,32 @@ class WebCrawler:
         if current_url in self.visited:
             return []
 
-        self.visited.add(current_url)
         self.url_graph[current_url] = []
 
         page_content = fetch_page_content(current_url)
+        self.visited.add(current_url)
         if not page_content:
             return []
 
         next_urls = []
+        print(f'crawling: {current_url}')
         found_urls = find_links(page_content)
 
         for link in found_urls:
             formatted_url = format_url(self.domain, link)
-            if formatted_url and is_within_domain(self.domain, formatted_url):
+            if formatted_url:
                 if formatted_url not in self.url_graph[current_url]:
                     self.url_graph[current_url].append(formatted_url)
-                if formatted_url not in self.visited:
+                if formatted_url not in self.visited and is_within_domain(self.domain, formatted_url):
                     next_urls.append((formatted_url, depth + 1))
 
         return next_urls
 
     def write_output(self):
-        with open(os.path.join('output/', 'url_graph.json'), 'w') as f:
+        with open(url_graph_path, 'w') as f:
             json.dump(self.url_graph, f, indent=4)  # Write the graph to a JSON file with indentation for readability
-
-    print('output written to webcrawler/output/')
+        print('crawl complete!')
+        print('output written to webcrawler/output/')
 
     def crawl(self):
         """

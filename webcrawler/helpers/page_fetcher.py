@@ -1,5 +1,6 @@
 import logging
 import requests
+from requests import Timeout
 
 
 def fetch_page_content(url):
@@ -11,7 +12,11 @@ def fetch_page_content(url):
     try:
         res = requests.get(url, timeout=10)
         return res.text
+    except Timeout:
+        logging.warning(f"Timeout occurred while fetching {url}, skipping.")
     except requests.RequestException as e:
-        # if we fail to fetch a page log an error, but continue crawling
-        logging.error(f'Failed to fetch {url}, {e}')
+        logging.error(f"Failed to fetch {url}: {str(e)}")
+        return None
+    except Exception as e:
+        logging.error(f"Unexpected error when fetching {url}: {str(e)}")
         return None
