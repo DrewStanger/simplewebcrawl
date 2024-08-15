@@ -41,25 +41,27 @@ class WebCrawler:
         :param depth: the current depth from the starting url
         :return: next_urls, [] or List of urls found and the current depth.
         """
-        if current_url in self.visited:
+        normalised_url = format_url(self.domain, current_url)
+
+        if normalised_url in self.visited:
             return []
 
-        self.url_graph[current_url] = []
+        self.url_graph[normalised_url] = []
 
-        page_content = fetch_page_content(current_url)
-        self.visited.add(current_url)
+        page_content = fetch_page_content(normalised_url)
+        self.visited.add(normalised_url)
         if not page_content:
             return []
 
         next_urls = []
-        print(f'crawling: {current_url}')
+        print(f'crawling: {normalised_url}')
         found_urls = find_links(page_content)
 
         for link in found_urls:
             formatted_url = format_url(self.domain, link)
             if formatted_url:
-                if formatted_url not in self.url_graph[current_url]:
-                    self.url_graph[current_url].append(formatted_url)
+                if formatted_url not in self.url_graph[normalised_url]:
+                    self.url_graph[normalised_url].append(formatted_url)
                 if formatted_url not in self.visited and is_within_domain(self.domain, formatted_url):
                     next_urls.append((formatted_url, depth + 1))
 

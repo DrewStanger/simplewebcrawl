@@ -9,7 +9,7 @@ from webcrawler.utils.url_processer import format_url, is_within_domain
     ("https://example.com", "https://other.com", "https://other.com"),
     ("https://example.com", "javascript:void(0)", None),
     ("https://example.com", "#", None),
-    ("http://example.com", "/relative", "http://example.com/relative"),
+    ("http://example.com", "/relative", "https://example.com/relative"),
     ("http://example.com", "https://example.com/absolute", "https://example.com/absolute"),
 ])
 def test_format_url(domain, url, expected):

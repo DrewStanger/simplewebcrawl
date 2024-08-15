@@ -18,11 +18,11 @@ pip3 install -r requirements.txt
 You can run the web crawler from the root of the project with the following command:
 
 ```
-python -m webcrawler.crawler --domain <domain_url> --max_depth <depth> --conc <number_of_concurrent_requests>
+python3 -m webcrawler.crawler --domain <domain_url> --max_depth <depth> --conc <number_of_concurrent_requests>
 ```
 For example, to crawl monzo.com with a maximum depth of 1 and 10 concurrent requests, run:
 ```
-python -m webcrawler.crawler --domain http://monzo.com --max_depth 1 --conc 10
+python3 -m webcrawler.crawler --domain http://monzo.com --max_depth 1 --conc 10
 ``` 
 Replace <domain_url>, <depth>, and <number_of_concurrent_requests> with the appropriate values:
 
