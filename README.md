@@ -77,16 +77,16 @@ Depending on the number of concurrent workers, this can significantly reduce the
 ### Testing
 
 Unit testing has been completed, an improvement that could be made to the overall testing of this web crawler is 
-integration testing. In order to implement this and simulate the real world application of the web crawler a local
-web server could be launched for testing purposes which contains various html pages which would provide a consistent 
+integration testing. In order to implement this and simulate the real world application of the web crawler, a local
+web server could be launched containing fixtures for testing purposes, i.e. various html pages which would provide a consistent 
 testing platform.
 
-This could also enable performance and load testing.
+If extended, this could also enable performance testing and provide a internal means of discovering the crawlers limitations.
 
 
 ### Output
 
-The output is written to JSON, mapping visited URLs to the list of discovered URLs. For very large websites or deep 
-crawls, this could become a bottleneck as the data is stored in memory before being written to the file. A potential 
-improvement could be to write to the file continuously or to use a database to store results as the crawl progresses.
+The output is written to JSON, mapping visited URLs to the list of discovered URLs. This is effective for the standard expectations
+of a webcrawler, but for very large websites or deep crawls, this could become a bottleneck as the data is stored in memory before being written to the file. 
+A potential improvement could be to write to the file continuously or to use a database to store results as the crawl progresses.
 
