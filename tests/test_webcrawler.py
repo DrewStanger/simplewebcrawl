@@ -23,7 +23,7 @@ def test_crawler_initialization(crawler):
 @patch('webcrawler.crawler.fetch_page_content')
 @patch('webcrawler.crawler.find_links')
 def test_process_page(mock_find_links, mock_fetch_page_content, crawler):
-    mock_fetch_page_content.return_value = "<html>content</html>"
+    mock_fetch_page_content.return_value = "<html><a href='https://example.com/page1'>example</a>content<a href='https://example.com/page2'>example</a></html>"
     mock_find_links.return_value = ["https://example.com/page1", "https://example.com/page2"]
 
     result = crawler.process_page("https://example.com", 0)
