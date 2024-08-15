@@ -60,8 +60,10 @@ class WebCrawler:
         for link in found_urls:
             formatted_url = format_url(self.domain, link)
             if formatted_url:
+                # add to url_graph if not reoccurance 
                 if formatted_url not in self.url_graph[normalised_url]:
                     self.url_graph[normalised_url].append(formatted_url)
+                # add to the next_urls array to be searched if not previously visited and within domain
                 if formatted_url not in self.visited and is_within_domain(self.domain, formatted_url):
                     next_urls.append((formatted_url, depth + 1))
 
