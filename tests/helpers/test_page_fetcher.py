@@ -1,28 +1,34 @@
 import pytest
-from unittest.mock import patch, Mock
-from requests.exceptions import Timeout
-
+import requests
+from requests.exceptions import Timeout, RequestException
+from unittest.mock import patch
 from webcrawler.helpers.page_fetcher import fetch_page_content
 
+@pytest.fixture
+def mock_requests_get():
+    with patch('requests.get') as mock_get:
+        yield mock_get
 
-@patch('requests.get')
-def test_fetch_page_content_timeout(mock_get):
-    mock_get.side_effect = Timeout("Request timed out")
-    content = fetch_page_content("https://example.com")
-    assert content is None
+def test_successful_fetch(mock_requests_get):
+    mock_requests_get.return_value.text = "<html>Test content</html>"
+    result = fetch_page_content("http://example.com")
+    assert result == "<html>Test content</html>"
+    mock_requests_get.assert_called_once_with("http://example.com", timeout=10)
 
+def test_timeout(mock_requests_get, caplog):
+    mock_requests_get.side_effect = Timeout("Connection timed out")
+    result = fetch_page_content("http://example.com")
+    assert result is None
+    assert "Timeout occurred while fetching http://example.com, skipping." in caplog.text
 
-@patch('requests.get')
-def test_fetch_page_content_retry_exhaustion(mock_get):
-    mock_get.side_effect = Timeout("Request timed out")
-    content = fetch_page_content("https://example.com")
-    assert content is None
-    assert mock_get.call_count == 1
+def test_request_exception(mock_requests_get, caplog):
+    mock_requests_get.side_effect = RequestException("404 Not Found")
+    result = fetch_page_content("http://example.com")
+    assert result is None
+    assert "Failed to fetch http://example.com: 404 Not Found" in caplog.text
 
-
-@patch('requests.get')
-@patch('logging.warning')
-def test_fetch_page_content_timeout_logging(mock_logging, mock_get):
-    mock_get.side_effect = Timeout("Request timed out")
-    fetch_page_content("https://example.com")
-    mock_logging.assert_called_with("Timeout occurred while fetching https://example.com, skipping.")
+def test_unexpected_exception(mock_requests_get, caplog):
+    mock_requests_get.side_effect = ValueError("Unexpected error")
+    result = fetch_page_content("http://example.com")
+    assert result is None
+    assert "Unexpected error when fetching http://example.com: Unexpected error" in caplog.text
