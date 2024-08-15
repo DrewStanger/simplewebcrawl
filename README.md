@@ -55,6 +55,10 @@ You can run these tests from the root of the project using pytest:
 ```
 pytest tests/
 ``` 
+or
+``` 
+python3 -m pytest tests
+``` 
 
 ## Trade-offs and Potential Improvements
 
