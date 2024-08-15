@@ -13,6 +13,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(script_dir, '', 'output')
 url_graph_path = os.path.join(output_dir, 'url_graph.json')
 
+
 class WebCrawler:
     """
     WebCrawler crawls a given domain to a specified depth
