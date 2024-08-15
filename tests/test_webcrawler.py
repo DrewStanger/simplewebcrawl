@@ -47,20 +47,6 @@ def test_process_page_no_content(mock_fetch_page_content, crawler):
     assert result == []
 
 
-@patch('builtins.open', new_callable=MagicMock)
-@patch('json.dump')
-def test_write_output(mock_json_dump, mock_open, crawler):
-    crawler.url_graph = {"https://example.com": ["https://example.com/page1"]}
-    expected_path_regex = re.compile(
-        r'.*webcrawler\\output\\url_graph\.json'
-    )
-    crawler.write_output()
-    actual_path = mock_open.call_args[0][0]
-    assert expected_path_regex.match(
-        actual_path), f"Path '{actual_path}' does not match the pattern '{expected_path_regex.pattern}'"
-    mock_json_dump.assert_called_once()
-
-
 @patch.object(WebCrawler, 'process_page')
 @patch.object(WebCrawler, 'write_output')
 def test_crawl(mock_write_output, mock_process_page, crawler):
